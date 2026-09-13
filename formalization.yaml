@@ -1,0 +1,189 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Lean proofs of Dimitrov's Conjectures 1 and 3"
+  description: >-
+    A Lean 4 formalization proving Dimitrov's Conjectures 1 and 3 for every
+    natural k >= 1 and n >= 2. The results concern inequalities involving
+    Euler's totient, Dedekind's psi function, and the sum-of-divisors function.
+    The source paper proves the k = 1 instances and discusses k = 2, 3; this
+    development covers the full stated range, including k >= 4, and additionally
+    proves for each inequality that equality holds exactly when n is prime.
+    By supplying the full parameter range and sharp equality cases beyond those
+    treated in the source, the project is relevant to researchers in elementary
+    and analytic number theory who study inequalities among multiplicative
+    arithmetic functions, and to formal-mathematics researchers studying the
+    verification of contemporary conjectures.
+    Historical priority for the full-range proofs has not been established by
+    expert or source-author review. The mathematical reductions, Lean code, and
+    documentation were generated substantially by OpenAI Codex under human
+    direction, as detailed below.
+  authors:
+    - "Michael Mazur"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Michael Mazur"
+
+classification:
+  arxiv: ["math.NT"]
+  msc2020: ["11A25", "26D15"]
+
+sources:
+  - title: "Lower bounds on expressions depending on the functions phi(n), psi(n) and sigma(n), III"
+    authors:
+      - "S. I. Dimitrov"
+    id: "arXiv:2606.12484v1"
+    type: "paper"
+    location: "Conjecture 1 on PDF page 3 and Conjecture 3 on PDF page 4"
+    relationship: "formalizes"
+    note: >-
+      The source states both full-range conjectures, proves their k = 1 cases,
+      and remarks on k = 2, 3. This repository supplies Lean-checked proofs for
+      all k >= 1. No source-author confirmation or endorsement has been received.
+    author_endorsement: "not-contacted"
+  - title: "The generating identity of Cauchy-Schwarz-Bunyakovsky inequality"
+    authors:
+      - "A. M. Sommariva"
+    id: "https://doi.org/10.4171/EM/78"
+    type: "paper"
+    location: "Elemente der Mathematik 63 (2008), 1-5"
+    relationship: "background"
+    note: >-
+      Background for the classical Lagrange/Cauchy identity underlying the
+      ratio-constrained analytic reduction used for Conjecture 1.
+    author_endorsement: "not-contacted"
+  - title: "Generalizations and refinements for Nesbitt's inequality"
+    authors:
+      - "Mihaly Bencze"
+      - "Ovidiu T. Pop"
+    id: "https://doi.org/10.7153/jmi-05-02"
+    type: "paper"
+    location: "Journal of Mathematical Inequalities 5(1) (2011), 13-20, Theorem 3.1"
+    relationship: "background"
+    note: >-
+      Background for the analytic balancing step used for Conjecture 3; this
+      repository formalizes the needed specialization and monotonicity argument.
+    author_endorsement: "not-contacted"
+
+related_formalizations: []
+
+status:
+  scope: >-
+    The Comparator record covers four claims: the exact rational full-range
+    forms of Conjectures 1 and 3 and the two companion equality-if-and-only-if-
+    prime theorems. Challenge.lean's four deliberate sorries are excluded from
+    these counts. The substantive proof development contains no sorry and no
+    custom axiom. The source's other conjectures are outside this project.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "PalomarDimitrov.conjecture1FullRange"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "PalomarDimitrov.conjecture1EqualityIffPrime"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "PalomarDimitrov.conjecture3FullRange"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "PalomarDimitrov.conjecture3EqualityIffPrime"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["OpenAI Codex (GPT-5)"]
+      framework: "Codex desktop"
+      tool_setup: >-
+        Agentic source search, mathematical reduction, Lean/mathlib proof
+        development, compilation, kernel checks, independent NanoDa replay,
+        provenance drafting, and separate audit runs.
+      cost:
+        wall_time: "not reconstructed"
+        spend_usd: "subscription-based; exact spend not tracked"
+        hardware: "local macOS host with hosted model inference"
+      prompting_notes: >-
+        The human requester asked the agent to locate and attempt recent open
+        problems, formalize any proofs in Lean, recheck prior art, and prepare a
+        public verification record. The agent chose both targets and developed
+        the proofs iteratively with compiler and checker feedback.
+    - method: "manual"
+      models: []
+      framework: "n/a"
+      tool_setup: >-
+        Michael Mazur initiated the project, set its goals and disclosure
+        constraints, reviewed project-level decisions, and serves as the human
+        repository maintainer.
+      cost:
+        wall_time: "personal time not yet reconstructed"
+        spend_usd: "not tracked"
+        hardware: "personal computer"
+      prompting_notes: "Project direction and maintenance; no claim of independently derived human proofs."
+  spend_usd: "subscription-based; exact spend not tracked"
+  notes: >-
+    OpenAI Codex selected the conjectures, derived and tested the mathematical
+    arguments, researched prior art, wrote the substantive Lean formalization,
+    ran the reported checks, and drafted the documentation. Michael Mazur
+    directed the objective and is the responsible human maintainer. The results
+    must not be described as solely human-authored proofs.
+
+fidelity:
+  divergences: >-
+    No known change to either source conjecture's quantified range or displayed
+    inequality. The theorems are stated over the rationals, which is equivalent
+    to the usual real interpretation for these rational-valued expressions.
+    Dedekind psi is defined by the source's standard prime-factor product; the
+    hypothesis n >= 2 makes the convention at zero irrelevant. The two equality
+    iff prime theorems are additional results proved by this project rather than
+    claims attributed to the source paper.
+
+review:
+  status: "agent-reviewed"
+  reviewers:
+    - "OpenAI Codex (separate statement, proof, verification, and prior-art audit runs)"
+  notes: >-
+    Separate AI-assisted audits checked the source transcription, proof shape,
+    equality statements, numerical behavior, axioms, and available prior art.
+    No independent human mathematical review and no source-author verification
+    have been completed as of 2026-09-13.
+
+alignment:
+  namespace: "PalomarDimitrov"
+  statements:
+    - source: "Dimitrov, arXiv:2606.12484v1, Conjecture 1"
+      lean: "PalomarDimitrov.conjecture1FullRange"
+      module: "Solution"
+      status: "proved"
+      note: "Exact full-range rational statement for k >= 1 and n >= 2."
+    - source: "Additional equality analysis for Conjecture 1"
+      lean: "PalomarDimitrov.conjecture1EqualityIffPrime"
+      module: "Solution"
+      status: "proved"
+      note: "Equality in the first displayed bound holds exactly for prime n."
+    - source: "Dimitrov, arXiv:2606.12484v1, Conjecture 3"
+      lean: "PalomarDimitrov.conjecture3FullRange"
+      module: "Solution"
+      status: "proved"
+      note: "Exact full-range rational statement for k >= 1 and n >= 2."
+    - source: "Additional equality analysis for Conjecture 3"
+      lean: "PalomarDimitrov.conjecture3EqualityIffPrime"
+      module: "Solution"
+      status: "proved"
+      note: "Equality in the second displayed bound holds exactly for prime n."
+
+acknowledgements: >-
+  S. I. Dimitrov proposed the conjectures. The development uses Lean 4 and
+  Mathlib; verification tooling includes leanchecker, Comparator, lean4export,
+  and the independent NanoDa kernel implementation. The analytic background is
+  credited above to A. M. Sommariva and to Mihaly Bencze and Ovidiu T. Pop.

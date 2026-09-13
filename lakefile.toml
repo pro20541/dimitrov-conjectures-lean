@@ -1,0 +1,27 @@
+name = "frontier_math_lean_2026"
+version = "0.1.0"
+defaultTargets = [
+  "FrontierMathLean",
+  "Challenge",
+  "Solution"
+]
+
+[leanOptions]
+autoImplicit = false
+relaxedAutoImplicit = false
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.32.2"
+
+[[lean_lib]]
+name = "FrontierMathLean"
+
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]

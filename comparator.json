@@ -1,0 +1,13 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "PalomarDimitrov.conjecture1FullRange",
+    "PalomarDimitrov.conjecture1EqualityIffPrime",
+    "PalomarDimitrov.conjecture3FullRange",
+    "PalomarDimitrov.conjecture3EqualityIffPrime"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}

@@ -1,0 +1,128 @@
+name: Lean verification
+
+on:
+  push:
+    branches: [main, "codex/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the locked source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Build the locked project
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          build: true
+          leanchecker: false
+          nanoda: false
+          use-github-cache: false
+          use-mathlib-cache: true
+
+      # The action's automatic inference uses the package name, which differs
+      # from the actual root module. Name that module explicitly.
+      - name: Replay the exact root module
+        run: |
+          set -euo pipefail
+          lake env lean --trust=0 Solution.lean
+          lake env lean --trust=0 \
+            FrontierMathLean/DimitrovConjecture1Equality.lean
+          lake env lean --trust=0 \
+            FrontierMathLean/DimitrovConjecture3Equality.lean
+          lake env lean --trust=0 FrontierMathLean.lean
+          lake env leanchecker \
+            FrontierMathLean.DimitrovConjecture3Equality
+          lake env leanchecker Solution
+          lake env leanchecker FrontierMathLean
+
+      - name: Reject proof placeholders and permissive declarations
+        run: |
+          set -euo pipefail
+          if rg -n --glob '*.lean' \
+            '\b(axiom|opaque|extern|sorry|admit|unsafe|partial|implemented_by|run_tac)\b|sorryAx|#check|Lean\.ofReduce(Bool|Nat)' \
+            . --glob '!.lake/**' --glob '!Challenge.lean'; then
+            echo 'Forbidden declaration or placeholder found.' >&2
+            exit 1
+          fi
+          test "$(rg -c '^\s+sorry\s*$' Challenge.lean)" -eq 4
+
+      - name: Validate the Palomar submission surface
+        run: ruby scripts/validate-palomar.rb
+
+      # This pair shares export format 3.1.0. Stream the full environment so the
+      # runner does not materialize a large plaintext export. The false setting
+      # below skips unused unpermitted declarations (including sorryAx); a
+      # theorem depending on one still fails because it is absent downstream.
+      - name: Replay FrontierMathLean with independent nanoda checker
+        shell: bash
+        run: |
+          set -euo pipefail
+          verifier_root="${RUNNER_TEMP}/frontier-verifiers"
+          mkdir -p "${verifier_root}"
+
+          rustup toolchain install 1.97.1 --profile minimal
+          rustup default 1.97.1
+
+          git init -q "${verifier_root}/lean4export"
+          git -C "${verifier_root}/lean4export" remote add origin \
+            https://github.com/leanprover/lean4export.git
+          git -C "${verifier_root}/lean4export" fetch -q --depth=1 origin \
+            86e4a339507466921dc8c5417c8cb1de1ce7df60
+          git -C "${verifier_root}/lean4export" checkout -q --detach FETCH_HEAD
+          (cd "${verifier_root}/lean4export" && lake build lean4export)
+
+          git init -q "${verifier_root}/nanoda"
+          git -C "${verifier_root}/nanoda" remote add origin \
+            https://github.com/robsimmons/nanoda_lib.git
+          git -C "${verifier_root}/nanoda" fetch -q --depth=1 origin \
+            68d5ca9db226849b41a6fff59d796ff19d0a8840
+          git -C "${verifier_root}/nanoda" checkout -q --detach FETCH_HEAD
+          cargo build --release --locked \
+            --manifest-path "${verifier_root}/nanoda/Cargo.toml"
+
+          printf '%s\n' \
+            '{"use_stdin":true,"permitted_axioms":["propext","Classical.choice","Quot.sound"],"unpermitted_axiom_hard_error":false,"num_threads":1,"nat_extension":true,"string_extension":true,"print_success_message":true,"print_axioms":false}' \
+            > "${verifier_root}/nanoda.json"
+
+          lake env \
+            "${verifier_root}/lean4export/.lake/build/bin/lean4export" \
+            FrontierMathLean \
+            | "${verifier_root}/nanoda/target/release/nanoda_bin" \
+                "${verifier_root}/nanoda.json"
+
+  palomar-comparator:
+    name: Palomar Comparator and dual-kernel replay
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out the locked source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Install Lean and fetch the Mathlib cache
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          build: false
+          leanchecker: false
+          nanoda: false
+          use-github-cache: false
+          use-mathlib-cache: true
+
+      - name: Install the pinned Go toolchain
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: "1.24.0"
+          cache: false
+
+      - name: Validate Palomar metadata
+        run: ruby scripts/validate-palomar.rb
+
+      - name: Run Comparator, Lean replay, and NanoDa replay
+        run: ./scripts/verify-comparator.sh
