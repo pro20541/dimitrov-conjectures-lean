@@ -10,10 +10,10 @@ The formalization proves both inequalities for every natural `k >= 1` and
 
 ## Status and claim limits
 
-The proofs compile with Lean and Mathlib v4.32.2 and have passed the checks
-described in `VERIFICATION.md`. The four `sorry` terms in `Challenge.lean` are
-intentional placeholders in Palomar's challenge/solution format; the
-substantive development and `Solution.lean` contain no `sorry` or custom axiom.
+The proofs compile with Lean and Mathlib v4.32.0. The four `sorry` terms in
+`Challenge.lean` are intentional placeholders in Palomar's challenge/solution
+format; the substantive development and `Solution.lean` contain no `sorry` or
+custom axiom.
 
 Machine verification establishes that the stated results follow from the
 listed foundations. It does not establish historical novelty. Searches have

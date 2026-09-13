@@ -9,9 +9,9 @@ lean4export_dir="$cache_root/lean4export"
 nanoda_dir="$cache_root/nanoda"
 
 # These are immutable revisions used by Palomar's public verification pipeline
-# on 13 September 2026. lean4export is matched to this project's Lean v4.32.2.
+# on 13 September 2026. lean4export is matched to this project's Lean v4.32.0.
 comparator_commit=575674928e239f5bc452aab72d1dd7b0f1326494
-lean4export_commit=86e4a339507466921dc8c5417c8cb1de1ce7df60
+lean4export_commit=4e7915201d3f9f04470d9eae002fa695f7cdc589
 landrun_commit=811cfff51ceaf3d9843708aa6d22e9b84ccac8b4
 nanoda_commit=68d5ca9db226849b41a6fff59d796ff19d0a8840
 
