@@ -45,13 +45,13 @@ jobs:
       - name: Reject proof placeholders and permissive declarations
         run: |
           set -euo pipefail
-          if rg -n --glob '*.lean' \
-            '\b(axiom|opaque|extern|sorry|admit|unsafe|partial|implemented_by|run_tac)\b|sorryAx|#check|Lean\.ofReduce(Bool|Nat)' \
-            . --glob '!.lake/**' --glob '!Challenge.lean'; then
+          forbidden='(^|[^[:alnum:]_])(axiom|opaque|extern|sorry|admit|unsafe|partial|implemented_by|run_tac)([^[:alnum:]_]|$)|sorryAx|#check|Lean\.ofReduce(Bool|Nat)'
+          if grep -RInE --include='*.lean' --exclude='Challenge.lean' \
+            --exclude-dir='.lake' --exclude-dir='.git' "${forbidden}" .; then
             echo 'Forbidden declaration or placeholder found.' >&2
             exit 1
           fi
-          test "$(rg -c '^\s+sorry\s*$' Challenge.lean)" -eq 4
+          test "$(grep -Ec '^[[:space:]]+sorry[[:space:]]*$' Challenge.lean)" -eq 4
 
       - name: Validate the Palomar submission surface
         run: ruby scripts/validate-palomar.rb

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Comparator currently omits the outer delimiter required by Landrun. Preserve
-# all accepted sandbox flags, reject any request that disables a restriction,
-# and add exactly one delimiter before the sandboxed command.
+# Preserve all accepted sandbox flags, accept Comparator invocations with or
+# without an outer delimiter, reject requests that disable a restriction, and
+# pass exactly one delimiter before the sandboxed command.
 landrun_binary=${PALOMAR_LANDRUN_BIN:?PALOMAR_LANDRUN_BIN must name the pinned Landrun binary}
 landrun_options=()
 
@@ -24,6 +24,10 @@ while [ "$#" -gt 0 ]; do
       fi
       landrun_options+=("$1" "$2")
       shift 2
+      ;;
+    --)
+      shift
+      break
       ;;
     -*)
       echo "error: unrecognized Landrun option $1" >&2
