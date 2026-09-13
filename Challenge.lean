@@ -40,6 +40,11 @@ def dedekindPsi (n : ℕ) : ℕ :=
   if n = 0 then 0 else
     ∏ p ∈ n.primeFactors, p ^ (n.factorization p - 1) * (p + 1)
 
+/-- The ordinary sum-of-divisors function `σ(n)`, exposed through a plain
+function so Palomar's notation audit does not need Mathlib's bundled coercion. -/
+def sigmaOne (n : ℕ) : ℕ :=
+  ArithmeticFunction.sigma 1 n
+
 /-- Dimitrov's Conjecture 1 for its entire stated range `k >= 1`, `n >= 2`. -/
 theorem conjecture1FullRange (k n : ℕ) (hk : 1 ≤ k) (hn : 2 ≤ n) :
     (5 * ((n : ℚ) ^ 2 - 1) ^ k
@@ -47,9 +52,9 @@ theorem conjecture1FullRange (k n : ℕ) (hk : 1 ≤ k) (hn : 2 ≤ n) :
           + 2 * ((n : ℚ) - 1) ^ (2 * k)) /
         (((n : ℚ) ^ 2 - 1) ^ k) ≤
       ((n.totient : ℚ) ^ k + (dedekindPsi n : ℚ) ^ k
-          + (ArithmeticFunction.sigma 1 n : ℚ) ^ k) *
+          + (sigmaOne n : ℚ) ^ k) *
         (((n.totient : ℚ) ^ k)⁻¹ + ((dedekindPsi n : ℚ) ^ k)⁻¹
-          + ((ArithmeticFunction.sigma 1 n : ℚ) ^ k)⁻¹) := by
+          + ((sigmaOne n : ℚ) ^ k)⁻¹) := by
   sorry
 
 /-- Equality in Dimitrov's Conjecture 1 holds if and only if `n` is prime. -/
@@ -59,9 +64,9 @@ theorem conjecture1EqualityIffPrime (k n : ℕ) (hk : 1 ≤ k) (hn : 2 ≤ n) :
           + 2 * ((n : ℚ) - 1) ^ (2 * k)) /
         (((n : ℚ) ^ 2 - 1) ^ k) =
       ((n.totient : ℚ) ^ k + (dedekindPsi n : ℚ) ^ k
-          + (ArithmeticFunction.sigma 1 n : ℚ) ^ k) *
+          + (sigmaOne n : ℚ) ^ k) *
         (((n.totient : ℚ) ^ k)⁻¹ + ((dedekindPsi n : ℚ) ^ k)⁻¹
-          + ((ArithmeticFunction.sigma 1 n : ℚ) ^ k)⁻¹)) ↔
+          + ((sigmaOne n : ℚ) ^ k)⁻¹)) ↔
       n.Prime := by
   sorry
 
@@ -74,11 +79,11 @@ theorem conjecture3FullRange (k n : ℕ) (hk : 1 ≤ k) (hn : 2 ≤ n) :
           + (((n : ℚ) ^ 2 - 1) ^ k))) ≤
       (n.totient : ℚ) ^ k /
           ((dedekindPsi n : ℚ) ^ k
-            + (ArithmeticFunction.sigma 1 n : ℚ) ^ k) +
+            + (sigmaOne n : ℚ) ^ k) +
         (dedekindPsi n : ℚ) ^ k /
           ((n.totient : ℚ) ^ k
-            + (ArithmeticFunction.sigma 1 n : ℚ) ^ k) +
-        (ArithmeticFunction.sigma 1 n : ℚ) ^ k /
+            + (sigmaOne n : ℚ) ^ k) +
+        (sigmaOne n : ℚ) ^ k /
           ((n.totient : ℚ) ^ k + (dedekindPsi n : ℚ) ^ k) := by
   sorry
 
@@ -91,11 +96,11 @@ theorem conjecture3EqualityIffPrime (k n : ℕ) (hk : 1 ≤ k) (hn : 2 ≤ n) :
             + (((n : ℚ) ^ 2 - 1) ^ k))) =
         (n.totient : ℚ) ^ k /
             ((dedekindPsi n : ℚ) ^ k
-              + (ArithmeticFunction.sigma 1 n : ℚ) ^ k) +
+              + (sigmaOne n : ℚ) ^ k) +
           (dedekindPsi n : ℚ) ^ k /
             ((n.totient : ℚ) ^ k
-              + (ArithmeticFunction.sigma 1 n : ℚ) ^ k) +
-          (ArithmeticFunction.sigma 1 n : ℚ) ^ k /
+              + (sigmaOne n : ℚ) ^ k) +
+          (sigmaOne n : ℚ) ^ k /
             ((n.totient : ℚ) ^ k + (dedekindPsi n : ℚ) ^ k))) ↔
       n.Prime := by
   sorry
